@@ -1,6 +1,7 @@
 import express from "express"
 import cors from 'cors'
 import compression from "compression"
+import { userRouter } from "./modules/user/user.route";
 const app = express()
 
 // Middleware
@@ -16,7 +17,7 @@ app.use(
     })
 )
 
-// app.use("/api/v1/user", userRouter)
+app.use("/api/v1/user", userRouter)
 // app.use("/api/v1/post", postRouter)
 
 app.get("/", (_req,res) => {
