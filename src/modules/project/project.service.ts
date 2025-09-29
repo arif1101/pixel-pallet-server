@@ -35,7 +35,7 @@ import httpStatus from 'http-status-codes'
 
 
 const createProject = async (
-    payload: Prisma.ProjectCreateInput
+    payload: Prisma.ProjectUncheckedCreateInput
 ): Promise<Project> => {
     const existingProject = await prisma.project.findFirst({
         where: { OR: [{ slug: payload.slug }, { title: payload.title }] },
@@ -46,7 +46,11 @@ const createProject = async (
     }
 
     return prisma.project.create({
-        data: payload,
+        data: {
+        ...payload,
+        authorId: Number(payload.authorId), // required!
+        images: payload.images ?? [],      // if using multiple images
+        },
         include: {
             author: {
                 select: { id: true, name: true, email: true },
@@ -55,18 +59,20 @@ const createProject = async (
     });
 };
 
-const updateProjectImage = async (
+const updateProjectImages = async (
     id: number,
-    imageUrl: string
+    imageUrls: string[]
 ): Promise<Project> => {
     return prisma.project.update({
         where: { id },
-        data: { image: imageUrl },
+        data: { images: imageUrls }, // make sure your Prisma schema uses images: String[]
         include: {
             author: { select: { id: true, name: true, email: true } },
         },
     });
 };
+
+
 
 
 const updateProject = async(id: number, payload: Partial<Project>) => {
@@ -115,5 +121,5 @@ export const ProjectServices = {
     createProject,
     updateProject,
     deleteProject,
-    updateProjectImage
+    updateProjectImages
 }
