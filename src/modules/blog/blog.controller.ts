@@ -13,7 +13,7 @@ const createBlog = catchAsync(async(req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: 201,
         success: true,
-        message: 'Tour created successfully',
+        message: 'Blog created successfully',
         data: result,
     });
 })
@@ -21,7 +21,6 @@ const createBlog = catchAsync(async(req: Request, res: Response) => {
 const updateBlog = catchAsync(async(req: Request, res: Response) =>{
     const {id} = req.params
     const result = await BlogServices.updateBlog(Number(id), req.body)
-    console.log(result)
     sendResponse(res, {
         statusCode: 201,
         success: true,
