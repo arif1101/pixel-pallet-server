@@ -28,17 +28,20 @@ model User {
   updatedAt DateTime  @updatedAt
 }
 
+
 model Blog {
   id        Int       @id @default(autoincrement())
   slug      String    @unique
   title     String
   content   String    @db.Text
   tags      String[]
+  image     String?   // optional: URL or file path for blog cover image
   author    User      @relation(fields: [authorId], references: [id])
   authorId  Int
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
+
 
 model Project {
   id             Int      @id @default(autoincrement())
