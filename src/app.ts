@@ -4,6 +4,7 @@ import compression from "compression"
 import { userRouter } from "./modules/user/user.route";
 import { AuthRouter } from "./modules/auth/auth.route";
 import { BlogRouter } from "./modules/blog/blog.route";
+import { ProjectRouter } from "./modules/project/project.route";
 const app = express()
 
 // Middleware
@@ -22,6 +23,7 @@ app.use(
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/auth", AuthRouter)
 app.use("/api/v1/blog", BlogRouter)
+app.use("/api/v1/project", ProjectRouter)
 
 app.get("/", (_req,res) => {
     res.send("API is running")

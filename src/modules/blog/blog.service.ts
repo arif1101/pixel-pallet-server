@@ -43,21 +43,21 @@ const updateBlog = async(id : number, payload : Partial<Blog>) => {
     }
 
 
-  if (payload.slug || payload.title) {
-    const duplicate = await prisma.blog.findFirst({
-      where: {
-        OR: [
-          ...(payload.slug ? [{ slug: payload.slug }] : []),
-          ...(payload.title ? [{ title: payload.title }] : []),
-        ],
-        NOT: { id }, // Exclude current blog
-      },
-    });
+    if (payload.slug || payload.title) {
+        const duplicate = await prisma.blog.findFirst({
+        where: {
+            OR: [
+            ...(payload.slug ? [{ slug: payload.slug }] : []),
+            ...(payload.title ? [{ title: payload.title }] : []),
+            ],
+            NOT: { id }, // Exclude current blog
+        },
+        });
 
-    if (duplicate) {
-      throw new Error("Slug or title already exists");
+        if (duplicate) {
+        throw new Error("Slug or title already exists");
+        }
     }
-  }
     
 
     const updateBlog = await prisma.blog.update({
