@@ -51,7 +51,7 @@ model Project {
   techStack      String[]
   category       String
   featured       Boolean  @default(false)
-  image          String?
+  images          String[]
   liveUrl        String?
   clientRepoUrl  String?
   serverRepoUrl  String?

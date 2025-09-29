@@ -8,28 +8,30 @@ import cloudinary from "../../config/cloudinary";
 import { parseProjectPayload } from "./project.utils";
 
 
-// project.controller.ts
 const createProject = catchAsync(async (req: Request, res: Response) => {
     const parsedPayload = parseProjectPayload(req.body);
 
     // First create project
     const project = await ProjectServices.createProject({
         ...parsedPayload,
-        image: null,
+        images: null,
     });
 
     // Handle image upload
     let finalProject = project;
-    if (req.file) {
-        const uploaded = await cloudinary.uploader.upload(req.file.path, {
-            folder: "projects",
-        });
-
-        finalProject = await ProjectServices.updateProjectImage(
-            project.id,
-            uploaded.secure_url
+    if (req.files && Array.isArray(req.files)) {
+        const uploadedImages = await Promise.all(
+            req.files.map((file: Express.Multer.File) =>
+                cloudinary.uploader.upload(file.path, { folder: "projects" })
+            )
         );
+
+        const imageUrls = uploadedImages.map(img => img.secure_url);
+
+        finalProject = await ProjectServices.updateProjectImages(project.id, imageUrls);
     }
+
+
 
     sendResponse(res, {
         statusCode: 201,
