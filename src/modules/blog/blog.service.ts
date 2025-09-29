@@ -5,35 +5,24 @@ import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes"
 
 
-const createBlog = async(payload: Prisma.BlogCreateInput):Promise<Blog>=> {
+const createBlog = async(payload: Prisma.BlogCreateInput & { authorId: number }): Promise<Blog> => {
+  const { authorId, ...rest } = payload;
 
-    const existingBlog = await prisma.blog.findFirst({
-        where: {
-            OR: [
-                {slug: payload.slug},
-                {title: payload.title}
-            ]
-        }
-    })
-    if(existingBlog){
-        throw new AppError(httpStatus.BAD_REQUEST, "Blog Exist in DB")
+  const result = await prisma.blog.create({
+    data: {
+      ...rest,
+      author: {
+        connect: { id: Number(authorId) } // connect by ID
+      }
+    },
+    include: {
+      author: {
+        select: { id: true, name: true, email: true }
+      }
     }
-    
-    const result = await prisma.blog.create({
-        data: payload,
-        include: {
-            author: {
-                select: {
-                    id: true,
-                    name: true,
-                    email: true
-                }
-            }
-        }
-    })
-    
-    return result
+  });
 
+  return result;
 }
 
 const updateBlog = async(id : number, payload : Partial<Blog>) => {

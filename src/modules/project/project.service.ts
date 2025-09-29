@@ -6,32 +6,68 @@ import httpStatus from 'http-status-codes'
  
 
 
-const createProject = async(payload: Prisma.ProjectCreateInput):Promise<Project> => {
+// const createProject = async(payload: Prisma.ProjectCreateInput):Promise<Project> => {
+//     const existingProject = await prisma.project.findFirst({
+//         where: {
+//             OR: [
+//                 {slug: payload.slug},
+//                 {title: payload.title}
+//             ]
+//         }
+//     })
+//     if(existingProject){
+//         throw new AppError(httpStatus.BAD_REQUEST, "Project Exist in DB")
+//     }
+//     const result = await prisma.project.create({
+//         data: payload,
+//         include: {
+//             author: {
+//                 select:{
+//                     id: true,
+//                     name: true,
+//                     email: true
+//                 }
+//             }
+//         }
+//     })
+//     return result
+// }
+
+
+const createProject = async (
+    payload: Prisma.ProjectCreateInput
+): Promise<Project> => {
     const existingProject = await prisma.project.findFirst({
-        where: {
-            OR: [
-                {slug: payload.slug},
-                {title: payload.title}
-            ]
-        }
-    })
-    if(existingProject){
-        throw new AppError(httpStatus.BAD_REQUEST, "Project Exist in DB")
+        where: { OR: [{ slug: payload.slug }, { title: payload.title }] },
+    });
+
+    if (existingProject) {
+        throw new AppError(httpStatus.BAD_REQUEST, "Project already exists");
     }
-    const result = await prisma.project.create({
+
+    return prisma.project.create({
         data: payload,
         include: {
             author: {
-                select:{
-                    id: true,
-                    name: true,
-                    email: true
-                }
-            }
-        }
-    })
-    return result
-}
+                select: { id: true, name: true, email: true },
+            },
+        },
+    });
+};
+
+const updateProjectImage = async (
+    id: number,
+    imageUrl: string
+): Promise<Project> => {
+    return prisma.project.update({
+        where: { id },
+        data: { image: imageUrl },
+        include: {
+            author: { select: { id: true, name: true, email: true } },
+        },
+    });
+};
+
 
 const updateProject = async(id: number, payload: Partial<Project>) => {
     const existingProject = await prisma.project.findUnique({where: {id}});
@@ -78,5 +114,6 @@ const deleteProject = async(id: number) => {
 export const ProjectServices = {
     createProject,
     updateProject,
-    deleteProject
+    deleteProject,
+    updateProjectImage
 }

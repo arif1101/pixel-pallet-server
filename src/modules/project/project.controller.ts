@@ -3,18 +3,43 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { ProjectServices } from "./project.service";
 import { prisma } from "../../config/db";
+import AppError from "../../errorHelpers/AppError";
+import cloudinary from "../../config/cloudinary";
+import { parseProjectPayload } from "./project.utils";
 
 
-const createProject = catchAsync(async(req: Request, res: Response) => {
-    const result = await ProjectServices.createProject(req.body)
+// project.controller.ts
+const createProject = catchAsync(async (req: Request, res: Response) => {
+    const parsedPayload = parseProjectPayload(req.body);
+
+    // First create project
+    const project = await ProjectServices.createProject({
+        ...parsedPayload,
+        image: null,
+    });
+
+    // Handle image upload
+    let finalProject = project;
+    if (req.file) {
+        const uploaded = await cloudinary.uploader.upload(req.file.path, {
+            folder: "projects",
+        });
+
+        finalProject = await ProjectServices.updateProjectImage(
+            project.id,
+            uploaded.secure_url
+        );
+    }
 
     sendResponse(res, {
         statusCode: 201,
         success: true,
-        message: 'Porject created successfully',
-        data: result,
+        message: "Project created successfully",
+        data: finalProject,
     });
-})
+});
+
+
 
 const updateProject = catchAsync(async(req: Request, res: Response) => {
     const {id} = req.params;

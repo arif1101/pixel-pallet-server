@@ -9,10 +9,13 @@ interface EnvConfig {
     JWT_ACCESS_SECRET: string,
     JWT_ACCESS_EXPIRES: string,
     BCRYPT_SALT_ROUND: string,
+    CLOUDINARY_CLOUD_NAME : string,
+    CLOUDINARY_API_KEY : string,
+    CLOUDINARY_API_SECRET : string,
 }
 
 const loadEnvVariables = (): EnvConfig => {
-    const requiredEnvVariables: string[] = ["PORT", "DATABASE_URL", "NODE_ENV","BCRYPT_SALT_ROUND", "JWT_ACCESS_EXPIRES", "JWT_ACCESS_SECRET"];
+    const requiredEnvVariables: string[] = ["PORT", "DATABASE_URL", "NODE_ENV","BCRYPT_SALT_ROUND", "JWT_ACCESS_EXPIRES", "JWT_ACCESS_SECRET", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET",];
 
     requiredEnvVariables.forEach(key => {
         if (!process.env[key]) {
@@ -28,6 +31,9 @@ const loadEnvVariables = (): EnvConfig => {
         BCRYPT_SALT_ROUND: process.env.BCRYPT_SALT_ROUND as string,
         JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET as string,
         JWT_ACCESS_EXPIRES: process.env.JWT_ACCESS_EXPIRES as string,
+        CLOUDINARY_CLOUD_NAME : process.env.CLOUDINARY_CLOUD_NAME as string,
+        CLOUDINARY_API_KEY : process.env.CLOUDINARY_API_KEY as string,
+        CLOUDINARY_API_SECRET : process.env.CLOUDINARY_API_SECRET as string,
     }
 }
 
