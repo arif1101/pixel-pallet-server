@@ -111,6 +111,22 @@ const allBlog = catchAsync(async(req: Request, res: Response) => {
 
 })
 
+
+const singleBlog = catchAsync(async(req: Request, res: Response) => {
+    
+    const { id } = req.params;
+    const blog = await BlogServices.singleBlog(Number(id))
+    
+    sendResponse(res, {
+        statusCode: 201,
+        success: true,
+        message: 'Retrived Blog successfully',
+        data: blog,
+    });
+
+})
+
+
 const deleteBlog = catchAsync(async(req: Request, res: Response) => {
     const {id} = req.params;
     const result = await BlogServices.deleteBlog(Number(id))
@@ -129,5 +145,6 @@ export const BlogController = {
     createBlog,
     updateBlog,
     allBlog,
-    deleteBlog
+    deleteBlog,
+    singleBlog
 }

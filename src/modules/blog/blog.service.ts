@@ -69,8 +69,19 @@ const deleteBlog = async(id: number) => {
     return deleteBlog;
 }
 
+const singleBlog = async(id:number)=>{
+    const result = await prisma.blog.findUnique({
+        where: {
+            id: id
+        }
+    })
+
+    return result
+}
+
 export const BlogServices = {
     createBlog,
     updateBlog,
-    deleteBlog
+    deleteBlog,
+    singleBlog 
 }
