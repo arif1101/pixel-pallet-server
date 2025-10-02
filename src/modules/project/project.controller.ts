@@ -30,9 +30,6 @@ const createProject = catchAsync(async (req: Request, res: Response) => {
 
         finalProject = await ProjectServices.updateProjectImages(project.id, imageUrls);
     }
-
-
-
     sendResponse(res, {
         statusCode: 201,
         success: true,
@@ -66,6 +63,20 @@ const allProject = catchAsync(async(req: Request, res: Response) => {
 
 })
 
+const singleProject = catchAsync(async(req: Request, res: Response) => {
+    
+    const { id } = req.params;
+    const project = await ProjectServices.singleProject(Number(id))
+    
+    sendResponse(res, {
+        statusCode: 201,
+        success: true,
+        message: 'Retrived Project successfully',
+        data: project,
+    });
+
+})
+
 const deleteProject = catchAsync(async(req: Request, res: Response) => {
     const {id} = req.params;
     const result = await ProjectServices.deleteProject(Number(id))
@@ -83,5 +94,6 @@ export const ProjectController = {
     createProject,
     updateProject,
     allProject,
-    deleteProject
+    deleteProject,
+    singleProject
 }

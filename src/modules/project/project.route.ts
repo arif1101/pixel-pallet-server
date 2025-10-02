@@ -6,6 +6,7 @@ const router = Router()
 
 router.get("/", ProjectController.allProject)
 router.post("/create", upload.array("image",5), ProjectController.createProject)
+router.get("/:id", ProjectController.singleProject)
 router.patch("/update/:id", ProjectController.updateProject)
 router.delete("/delete/:id", ProjectController.deleteProject)
 

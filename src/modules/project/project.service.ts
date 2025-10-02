@@ -72,9 +72,6 @@ const updateProjectImages = async (
     });
 };
 
-
-
-
 const updateProject = async(id: number, payload: Partial<Project>) => {
     const existingProject = await prisma.project.findUnique({where: {id}});
     if(!existingProject){
@@ -117,9 +114,20 @@ const deleteProject = async(id: number) => {
     return deleteProject;
 }
 
+const singleProject = async(id:number)=>{
+    const result = await prisma.project.findUnique({
+        where: {
+            id: id
+        }
+    })
+
+    return result
+}
+
 export const ProjectServices = {
     createProject,
     updateProject,
     deleteProject,
-    updateProjectImages
+    updateProjectImages,
+    singleProject
 }
