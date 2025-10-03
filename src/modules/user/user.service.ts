@@ -26,6 +26,23 @@ const createUser = async(payload: Prisma.UserCreateInput):Promise<User> => {
 }
 
 
+const getMyProfile = async (userId: number) => {
+  const user = await prisma.user.findUnique({
+    where: {
+        id: userId
+    }
+  })
+  if(!user){
+    throw new Error('User not found');
+  }
+  
+  return {
+    user
+  }
+};
+
+
 export const UserServices = {
     createUser,
+    getMyProfile
 }
