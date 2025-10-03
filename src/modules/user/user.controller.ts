@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import {UserServices } from "./user.service";
 import { sendResponse } from "../../utils/sendResponse";
@@ -17,9 +17,21 @@ const createUser = catchAsync(async(req: Request, res: Response) => {
 })
 
 
+const getMyProfile = catchAsync(async(req: Request, res: Response, next: NextFunction) => {
+  const userId = req.user?.userId
+  console.log("-------",userId)
+  const result = await UserServices.getMyProfile(Number(userId))
 
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User profile retrieved successfully',
+    data: result,
+  });
+})
 
 
 export const userController = {
-    createUser
+    createUser,
+    getMyProfile
 }
