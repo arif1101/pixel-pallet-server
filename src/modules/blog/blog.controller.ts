@@ -46,6 +46,20 @@ const createBlog = catchAsync(async (req: Request, res: Response) => {
   let payload = { ...req.body };
   console.log(payload)
 
+  // Convert tags to array if it's a string
+  if (typeof payload.tags === "string") {
+    try {
+      // Try to parse if it's a JSON array string like '["Next.js", "React"]'
+      const parsed = JSON.parse(payload.tags);
+      payload.tags = Array.isArray(parsed)
+        ? parsed.map(tag => tag.trim())
+        : [payload.tags.trim()];
+    } catch {
+      // If not valid JSON, fallback to comma split
+      payload.tags = payload.tags.split(",").map((tag:any) => tag.trim());
+    }
+  }
+
   // Convert authorId to number
   const authorId = Number(payload.authorId);
   if (isNaN(authorId)) {
