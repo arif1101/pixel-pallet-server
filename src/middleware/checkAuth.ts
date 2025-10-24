@@ -20,7 +20,11 @@ export const checkAuth = async (
   next: NextFunction
 ) => {
   try {
-    const accessToken = req.cookies.accessToken|| req.headers.authorization;
+    const accessToken =
+      req.cookies.accessToken ||
+      (req.headers.authorization?.startsWith("Bearer ")
+        ? req.headers.authorization.split(" ")[1]
+        : undefined);
 
     if (!accessToken) {
       throw new AppError(403, "No token received");
@@ -39,9 +43,7 @@ export const checkAuth = async (
       throw new AppError(httpStatus.BAD_REQUEST, "User does not exist");
     }
 
-    // 👉 No role check needed, since all are USER
-    req.user = verifiedToken;
-
+    req.user = verifiedToken; // Attach user info to request
     next();
   } catch (error) {
     next(error);

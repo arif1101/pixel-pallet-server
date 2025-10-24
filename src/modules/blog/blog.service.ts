@@ -5,6 +5,60 @@ import AppError from "../../errorHelpers/AppError";
 import httpStatus from "http-status-codes"
 
 
+interface BlogQuery {
+  page?: string;
+  limit?: string;
+  search?: string;
+  tag?: string;
+}
+
+
+export const getAllBlogsFromDB = async (query: BlogQuery) => {
+  const {
+    page = "1",
+    limit = "6",
+    search = "",
+    tag,
+  } = query;
+
+  const pageNumber = parseInt(page);
+  const limitNumber = parseInt(limit);
+  const skip = (pageNumber - 1) * limitNumber;
+
+  const where: any = {};
+
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: "insensitive" } },
+      { content: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  if (tag) {
+    where.tags = { has: tag };
+  }
+
+  const blogs = await prisma.blog.findMany({
+    where,
+    skip,
+    take: limitNumber,
+    orderBy: { createdAt: "desc" },
+  });
+
+  const total = await prisma.blog.count({ where });
+
+  const meta = {
+    total,
+    page: pageNumber,
+    limit: limitNumber,
+    totalPage: Math.ceil(total / limitNumber),
+  };
+
+  return { meta, data: blogs };
+};
+
+
+
 const createBlog = async(payload: Prisma.BlogCreateInput & { authorId: number }): Promise<Blog> => {
   const { authorId, ...rest } = payload;
 
@@ -83,5 +137,6 @@ export const BlogServices = {
     createBlog,
     updateBlog,
     deleteBlog,
-    singleBlog 
+    singleBlog,
+    getAllBlogsFromDB
 }

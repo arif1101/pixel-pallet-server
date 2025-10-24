@@ -99,17 +99,29 @@ const updateBlog = catchAsync(async(req: Request, res: Response) =>{
     });
 })
 
-const allBlog = catchAsync(async(req: Request, res: Response) => {
-    const blogs = await prisma.blog.findMany()
+// const allBlog = catchAsync(async(req: Request, res: Response) => {
+//     const blogs = await prisma.blog.findMany()
 
-    sendResponse(res, {
-        statusCode: 201,
-        success: true,
-        message: 'Retrived all Blog successfully',
-        data: blogs,
-    });
+//     sendResponse(res, {
+//         statusCode: 201,
+//         success: true,
+//         message: 'Retrived all Blog successfully',
+//         data: blogs,
+//     });
 
-})
+// })
+
+const allBlog = catchAsync(async (req: Request, res: Response) => {
+  const result = await BlogServices.getAllBlogsFromDB(req.query);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Retrieved all blogs successfully",
+    meta: result.meta,
+    data: result.data,
+  });
+});
 
 
 const singleBlog = catchAsync(async(req: Request, res: Response) => {
